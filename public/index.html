@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TodoList App</title>
+  <link rel="stylesheet" href="CSS/syles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Mi Lista de Tareas</h1>
+      <p>Gestiona tus tareas diarias de forma eficiente</p>
+    </header>
+
+    <div class="add-task-form">
+      <h2>Agregar Nueva Tarea</h2>
+      <form id="taskForm">
+        <div class="form-group">
+          <label for="titulo">Título*</label>
+          <input type="text" id="titulo" name="titulo" required>
+        </div>
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <textarea id="descripcion" name="descripcion" rows="3"></textarea>
+        </div>
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="completada" name="completada">
+          <label for="completada">¿Completada?</label>
+        </div>
+        <button type="submit">Agregar Tarea</button>
+      </form>
+    </div>
+
+    <div class="filters">
+      <h2>Filtrar Tareas</h2>
+      <button id="allTasks" class="filter-btn active">Todas</button>
+      <button id="pendingTasks" class="filter-btn">Pendientes</button>
+      <button id="completedTasks" class="filter-btn">Completadas</button>
+    </div>
+
+    <div class="tasks-container">
+      <h2>Mis Tareas <span id="taskCount">(0)</span></h2>
+      <div id="tasksList" class="tasks-list">
+        <!-- Las tareas se cargarán aquí dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para editar tarea -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Editar Tarea</h2>
+      <form id="editForm">
+        <input type="hidden" id="editId">
+        <div class="form-group">
+          <label for="editTitulo">Título*</label>
+          <input type="text" id="editTitulo" name="titulo" required>
+        </div>
+        <div class="form-group">
+          <label for="editDescripcion">Descripción</label>
+          <textarea id="editDescripcion" name="descripcion" rows="3"></textarea>
+        </div>
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="editCompletada" name="completada">
+          <label for="editCompletada">¿Completada?</label>
+        </div>
+        <button type="submit">Guardar Cambios</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
