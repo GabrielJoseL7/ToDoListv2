@@ -1,78 +1,95 @@
-let tareas = [
-    {
-        id: 1,
-        titulo: 'Aprender HTML',
-        descripcion: "Estudiar los fundamentos de HTML",
-        completada: false,
-        fechaCreacion: new Date('2025-09-02'), //formato fecha YYYY-MMM-DD
-        fechaActualizacion: new Date ('2025-09-02')
-    },
-    {
-        id: 2,
-        titulo: 'Aprender CSS',
-        descripcion: "Estudiar los fundamentos de CSS",
-        completada: false,
-        fechaCreacion: new Date('2025-09-02'), //formato fecha YYYY-MMM-DD
-        fechaActualizacion: new Date ('2025-09-02')
-    },
-    {
-        id: 3,
-        titulo: 'Aprender JavSsript',
-        descripcion: "Estudiar los fundamentos de JavaScript",
-        completada: false,
-        fechaCreacion: new Date('2025-09-02'), //formato fecha YYYY-MMM-DD
-        fechaActualizacion: new Date ('2025-09-02')
-    },    
-]
+const mongo = require('mongoose');
 
-let nextId = 4;
+//Definir el esquema de tareas
+const tareasSchema = new mongo.Schema({
+    /* id:{type: Number, required: true}, */
+    titulo:{type: String, required: true},
+    descripcion:{type: String, required: false},
+    completada:{type: Boolean, default: false},
+    fechaCreacion:{type:Date, default: Date.now},
+    fechaActualizacion:{type: Date, default: Date.now}
+});
+
+//Crear el modelo
+const Tareas = mongo.model('Tareas', tareasSchema);
+
+//Conexion a MongoDB
+const conectarDB = async () => {
+    try{
+       const MONGODB_URI = process.env.MONGODB_CONEXION;
+       await mongo.connect(MONGODB_URI, {
+        dbName: process.env.DB_NAME
+       });
+       
+
+        console.log('Conectado a MongoDB Atlas');
+    }
+    catch(error){
+        console.error('Error conectando a MongoDB: ', error.message);
+    }
+};
 
 //Funcion para obtener todas las tareas
-const obtenerTodasLasTareas = () => tareas;
+const obtenerTodasLasTareas = async () => {
+    try{
+        return await Tareas.find().sort({fechaCreacion:-1});
+    }
+    catch(error){
+        console.error('Error obteniendo las tareas: ', error.message)
+    }
+}
 
-//funcion para obtener tareas por ID
-const obtenerTareasPorId = (id) => tareas.find(t => t.id === id);
+//Funcion para obtener las tareas por ID
+const obtenerTareasPorID = async () => {
+    try{
+        return await Tareas.findById(id);
+    }
+    catch(error){
+        console.error('Error obteniendo las tareas por ID: ', error.message)
+    }
+}
 
-//funcion para crear nueva tareas
-const crearTarea = (tareaData) => {
-    const nuevaTarea = {
-        id: nextId++,
-        ...tareaData, //Operador Spread se utiliza para copiar datos
-        fechaCreacion: new Date(), 
-        fechaActualizacion: new Date(),
-    };
-
-    tareas.push(nuevaTarea); 
-    return nuevaTarea;
+//Funcion para crear nueva tarea
+const crearTarea = async (tareaData) => {
+    try{
+        const nuevaTarea = new Tareas(tareaData);
+        return await nuevaTarea.save();
+    }
+    catch(error){
+        console.error('Error creando tarea: ', error.message)
+    }
 };
 
-//Funcion para actualizar tarea
-const actualizarTarea = (id, nuevosDatos) => {
-    const index = tareas.findIndex(t => t.id === id);
-    if (index === -1 ) return null;
+const actualizarTarea = async (id, nuevosDatos) => {
+    try{
+        return await Tareas.findByIdAndUpdate(
+            id, 
+            {
+                ...nuevosDatos, fechaActualizacion: new Date()
+            }
+        );
+    }
+    catch(error){
+        console.error('Error actualizando la tarea: ', error.message)
+    }
+}
 
-    tareas[index] = {
-        ...tareas[index],
-        ...nuevosDatos,
-        fechaActualizacion: new Date()
-    };
+const eliminarTarea = async(id) => {
+    try{
+        return await Tareas.findByIdAndDelete(id);
+    }
+    catch(error){
+        console.error('Error eliminando tareas: ', error.message)
+    }
+}
 
-    return tareas[index];
-};
-
-// Funcion para eliminar tarea
-const eliminarTarea= (id) => {
-    const index = tareas.findIndex(t => t.id === id);
-    if (index === -1) return null;
-
-    return tareas.splice(index, 1)[0];
-}; 
-
-//Exportar todas las funciones para utilizar en otros archivos
+//Exportar el modulo
 module.exports = {
+    conectarDB,
+    Tareas, 
     obtenerTodasLasTareas,
-    obtenerTareasPorId,
+    obtenerTareasPorID, 
     crearTarea,
-    actualizarTarea,
+    actualizarTarea, 
     eliminarTarea
 };

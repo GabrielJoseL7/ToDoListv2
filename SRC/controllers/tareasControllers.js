@@ -8,10 +8,10 @@ const{
 
 //Controlador para obtener todas las tareas
 
-const getTareas = (req, res) => {
+const getTareas = async (req, res) => {
     try {
         const {completada} = req.query;
-        let tareas = obtenerTodasLasTareas();
+        let tareas = await obtenerTodasLasTareas();
 
         if(completada !== undefined){
             const estaCompletada = completada === 'true';
@@ -30,9 +30,9 @@ const getTareas = (req, res) => {
 };
 
 //Controlador para obtener tarea por ID
-const getTareasById = (req, res) => {
+const getTareasById = async (req, res) => {
     try{
-        const tarea = obtenerTareasPorID(req.id);
+        const tarea = await obtenerTareasPorID(req.params.id);
 
         //sino encuentra la tarea 
         if(!tarea){
@@ -49,11 +49,11 @@ const getTareasById = (req, res) => {
 };
 
 //Controlador para crear nueva tarea
-const createTarea = (req, res) => {
+const createTarea = async (req, res) => {
     try{
         const {titulo, descripcion, completada} = req.body;
 
-        const nuevaTarea = crearTarea({
+        const nuevaTarea = await crearTarea({
             titulo: titulo.trim(),
             descripcion: descripcion ? descripcion.trim():'',
             completada: completada || false
@@ -66,16 +66,16 @@ const createTarea = (req, res) => {
     }
 
     catch (error){
-        res.tatus(500).json({error: 'Error al crear la tarea'});
+        res.status(500).json({error: 'Error al crear la tarea'});
     }
 };
 
 //Actualizar tarea completa (PUT)
-const updateTarea = (req, res) => {
+const updateTarea = async (req, res) => {
     try {
         const { titulo, descripcion, completada } = req.body;
 
-        const tareaActualizada = actualizarTarea(req.id, {
+        const tareaActualizada = await actualizarTarea(req.id, {
             titulo: titulo.trim(),
             descripcion: descripcion ? descripcion.trim(): '',
             completada: completada !== undefined ? completada : false
@@ -97,9 +97,9 @@ const updateTarea = (req, res) => {
 };
 
 // Eliminar Tarea 
-const deleteTarea = (req, res) => {
+const deleteTarea = async (req, res) => {
     try{
-        const tareaEliminada = eliminarTarea(req.id);
+        const tareaEliminada = await eliminarTarea(req.id);
 
         if(!tareaEliminada) {
             return res.status(404).json({error: 'Tarea no encontrada'});

@@ -2,8 +2,16 @@ const express = require('express');
 const path = require('path');
 //Para instalar cors = npm install cors
 const cors = require('cors');
+require('dotenv').config();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+//Importar conexion de mongoDB
+const { conectarDB } = require('./data/tareasData');
+
+//Conectar a la base de datos
+conectarDB();
 
 app.use(express.static(path.join(__dirname, '../public')));
 
