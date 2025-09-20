@@ -14,7 +14,7 @@ const{
 const{
     validarTareaID,
     validarDatosTarea,
-} = require('../middleware/validators');
+} = require('../middleWare/validators');
 
 //Ruta GET /API/TAREAS
 router.get('/',getTareas);
